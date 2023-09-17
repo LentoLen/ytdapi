@@ -50,6 +50,7 @@ def tag_m4a(title, artist, album, year, thumbnail, lyrics, filepath):
         m4a_file = music_tag.load_file(filepath)
         m4a_file["title"] = title
         m4a_file["artist"] = artist
+        m4a_file["albumartist"] = artist
         m4a_file["album"] = album
         m4a_file["year"] = year
         if lyrics:
