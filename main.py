@@ -44,15 +44,16 @@ def get_artwork(url):
         return byteart.getvalue()
     return None
 
-def tag_m4a(title, artist, album, thumbnail, lyrics, filepath):
+def tag_m4a(title, artist, album, year, thumbnail, lyrics, filepath):
     if os.path.exists(filepath):
         # add metadata
         m4a_file = music_tag.load_file(filepath)
         m4a_file["title"] = title
         m4a_file["artist"] = artist
         m4a_file["album"] = album
+        m4a_file["year"] = year
         if lyrics:
-            m4a_file["lyrics"] = lyrics
+            m4a_file["lyrics"] = f'{lyrics.get("lyrics")}\n{lyrics.get("source")}'
         artwork = get_artwork(thumbnail)
         if artwork:
             m4a_file['artwork'] = artwork
@@ -71,6 +72,7 @@ def download_tagged_audio_endpoint(video_id):
     title = infos.get("title")
     artist = infos.get("artist")
     album = infos.get("album")
+    year = infos.get("release_year")
     if os.path.exists(filepath):
         thumbnail = f"https://i.ytimg.com/vi/{video_id}/maxresdefault.jpg"
         lyrics = ""
@@ -78,7 +80,7 @@ def download_tagged_audio_endpoint(video_id):
         if browseId != None:
             lyrics = ytm.get_lyrics(browseId)
 
-        tag_m4a(title, artist, album, thumbnail, lyrics, filepath)
+        tag_m4a(title, artist, album, year, thumbnail, lyrics, filepath)
         return FileResponse(filepath, media_type="audio/m4a", background=BackgroundTask(cleanup, filepath))
     
     return None
